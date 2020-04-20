@@ -1,0 +1,13 @@
+.card img{
+	width:100%;
+}
+.card-body{
+	padding:0px;
+}
+
+#delete-form{
+	display: inline;
+}
+.delete-form{
+	display: inline;
+}

@@ -1,0 +1,92 @@
+<%- include("partials/header") %>
+<div class="container">
+	<div class="row">
+		<div class="col-md-3">
+			<p><a class="navbar-brand" href="#">YelpCamp</a></p>
+			<ul class="list-group">
+  				<li class="list-group-item active">First item</li>
+  				<li class="list-group-item">Second item</li>
+  				<li class="list-group-item">Third item</li>
+			</ul>
+		</div>
+		<div class="col-md-9">
+			<div class="card">
+			    <div class="card-body"><img class="img-fluid" src="<%= campground.image %>"</div> 
+			    <div class="card-footer">
+			    	<h4 class="float-right">INR <%= campground.price %>/night</h4>
+			    	<h4><a href="#"><%= campground.name %> </a></h4>
+			    	<p><strong><%= campground.description %></strong></p>
+			    	<p><strong>Submitted By <%= campground.author.username %> </strong></p>
+
+			    	<% if(currentUser && campground.author.id.equals(currentUser._id)){ %>
+				    	<a class="btn btn-warning" href="/campgrounds/<%= campground._id %>/edit">Edit</a>
+				    	<form id="delete-form" action="/campgrounds/<%= campground._id %>/delete" method="POST">
+				    		<button class="btn btn-danger">Delete</button>
+				    	</form>
+				    <%  } %>
+			    </div>
+  			</div>
+  			<div class="bg-light">
+    			  <a class="btn btn-success float-right"  href="/campgrounds/<%= campground._id %>/comments/new">Leave a Review</a>
+
+    			  <br><br><hr>
+	    			   <% campground.comments.forEach(function(comment){ %>
+	    			   		<div class="row">
+	    			   			<div class="col-md-12">
+	    			   				<strong> <%= comment.author.username %> </strong>
+	    			   				<span class="float-right">10 DAYS AGO</span>
+	    			   				<p>
+								 		<%= comment.title %>
+									</p>
+									<% if(currentUser && comment.author.id.equals(currentUser._id)){ %>
+										<a href="/campgrounds/<%= campground._id %>/comments/<%= comment._id %>/edit" class="btn btn-sm btn-warning">Edit</a>
+
+										<form action="/campgrounds/<%= campground._id %>/comments/<%= comment._id %>/delete" method="POST" class="delete-form">
+												<input type="submit" class="btn btn-sm btn-danger" value="Delete">
+										</form>
+									<% } %>
+	    			   			</div>
+	    			   		</div>
+							
+						<% }) %>
+			</div>
+  			
+		</div>
+	</div>
+
+</div>
+
+<script>
+  function initMap() {
+    var lat = <%= campground.lat %>;
+    var lng = <%= campground.lng %>;
+    var center = {lat: lat, lng: lng };
+    var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 8,
+        center: center,
+        scrollwheel: false
+    });
+    var contentString = `
+      <strong><%= campground.name %><br />
+      <%= campground.location %></strong>
+      <p><%= campground.description %></p>
+    `
+    var infowindow = new google.maps.InfoWindow({
+      content: contentString
+    });
+    var marker = new google.maps.Marker({
+        position: center,
+        map: map
+    });
+    marker.addListener('click', function() {
+      infowindow.open(map, marker);
+    });
+  }
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDwSO3ByLifgJ-5hPhlGM8aiJ-swZvZNHA&callback=initMap"></script>
+
+
+
+
+
+<%- include("partials/footer") %>
